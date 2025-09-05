@@ -4,23 +4,29 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { IOrderInput } from "@/types/order.type";
+import { IOrder, IOrderInput } from "@/types/order.type";
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import { useMutation } from "@tanstack/react-query";
 import { createOrder } from "@/services/order.service";
 import { IHttpError, IHttpResponse } from "@/types/http.type";
+import { useRouter } from "next/navigation";
+import { ORDER_DETAILS_ROUTE } from "@/constants/routes.constant";
 
 export default function OrderForm() {
   const [isConnected] = useState(true); // useAccount();
 
+  const router = useRouter();
+
   const { isPending, error, mutate } = useMutation<
-    IHttpResponse<IOrderInput>,
+    IHttpResponse<IOrder>,
     IHttpError<IOrderInput>,
     IOrderInput
   >({
     mutationFn: async (input) => await createOrder(input),
-    onSuccess(data) {},
+    onSuccess(data) {
+      router.push(`${ORDER_DETAILS_ROUTE}/${data?.data?.order_id}`);
+    },
   });
 
   const {

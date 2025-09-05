@@ -17,5 +17,7 @@ export const getOrders = async () => {
 
 // get orders
 export const getSingleOrder = async (orderId: string) => {
-  return await handleGetRequest(`/api/mock/orders/${orderId}`);
+  return await handleGetRequest<IHttpResponse<IOrder>>(
+    `/api/mock/orders/${orderId}`
+  );
 };

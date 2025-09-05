@@ -1,17 +1,11 @@
-import WalletConnection from "@/components/walletConnection";
 import OrderForm from "./_components/orderForm";
+import Header from "./_components/header";
 
 export default function Home() {
   return (
     <div className="bg-surface-darker min-h-screen text-text-primary font-sans">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
-        <span className="font-heading font-bold text-2xl bg-[image:var(--color-primary-gradient)] bg-clip-text text-transparent [-webkit-text-fill-color:transparent]">
-          CryptoPay
-        </span>
-
-        <WalletConnection showBalance={false} />
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="max-w-3xl mx-auto text-center py-20 px-6">
