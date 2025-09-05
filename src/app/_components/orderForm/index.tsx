@@ -7,17 +7,34 @@ import { useAccount } from "wagmi";
 import { IOrderInput } from "@/types/order.type";
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
+import { useMutation } from "@tanstack/react-query";
+import { createOrder } from "@/services/order.service";
+import { IHttpError, IHttpResponse } from "@/types/http.type";
 
 export default function OrderForm() {
   const [isConnected] = useState(true); // useAccount();
 
+  const { isPending, error, mutate } = useMutation<
+    IHttpResponse<IOrderInput>,
+    IHttpError<IOrderInput>,
+    IOrderInput
+  >({
+    mutationFn: async (input) => await createOrder(input),
+    onSuccess(data) {},
+  });
+
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<IOrderInput>();
-  const onSubmit: SubmitHandler<IOrderInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IOrderInput> = (data) => {
+    mutate({
+      ...data,
+      amount: Number(data.amount),
+    });
+  };
+
   return (
     <section className="max-w-3xl mx-auto text-center py-20 px-6">
       {/* Only show the create order form when the wallet is connected */}
@@ -38,6 +55,11 @@ export default function OrderForm() {
               placeholder="Enter amount"
               {...register("amount", { required: true })}
             />
+            {error?.response?.data?.error.amount && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {error?.response?.data?.error.amount}
+              </span>
+            )}
           </div>
           <div className="flex flex-col">
             <label htmlFor="currency" className="block text-left text-sm mb-1">
@@ -48,6 +70,11 @@ export default function OrderForm() {
               <option value="USD">USD</option>
               <option value="NGN">NGN</option>
             </Select>
+            {error?.response?.data?.error.currency && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {error?.response?.data?.error.currency}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col">
@@ -59,6 +86,11 @@ export default function OrderForm() {
               placeholder="Enter Token"
               {...register("token", { required: true })}
             />
+            {error?.response?.data?.error.token && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {error?.response?.data?.error.token}
+              </span>
+            )}
           </div>
           <div className="flex flex-col">
             <label htmlFor="note" className="block text-left text-sm mb-1">
@@ -69,13 +101,19 @@ export default function OrderForm() {
               placeholder="Note (optional)"
               {...register("note", { required: false })}
             />
+            {error?.response?.data?.error.note && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {error?.response?.data?.error.note}
+              </span>
+            )}
           </div>
 
           <button
+            disabled={isPending}
             type="submit"
             className="w-full mt-8 py-2 rounded-lg bg-primary text-white hover:opacity-90 disabled:opacity-40"
           >
-            Create Order
+            {isPending ? "Processing..." : "Create Order"}
           </button>
         </form>
       ) : (
