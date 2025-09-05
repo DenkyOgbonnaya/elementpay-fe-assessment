@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
+  /* FONT FAMILY */
+  --font-body: var(--font-inter);
+  --font-heading: var(--font-manrope);
+
+  /* COLOR TOKENS */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #ff5acd;
+  --color-primary-gradient: linear-gradient(
+    90deg,
+    #a56cff 0%,
+    #ff5acd 50%,
+    #ffc371 100%
+  );
+  --color-secondary: #a56cff; /* purple accent */
+
+  /* Background surfaces */
+  --color-surface: #1a1c2e;
+  --color-surface-darker: #0d0b1a;
+  --color-surface-lighter: #2b2d42;
+
+  /* Text hierarchy */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a2b5;
+  --color-text-accent: #e5e7ff;
+
+  /* System states */
+  --color-success: #4ade80;
+  --color-warning: #facc15;
+  --color-error: #fb7185;
+
+  /* Utility */
+  --color-border: #2f3145;
+  --color-success: #24b314;
+
+  /* FONT SIZES */
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.438rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.602rem;
+  --text-4xl: 1.875rem;
+  --text-5xl: 2rem;
+
+  /* RESPONSIVE BREAK POINTS */
+  --breakpoint-xs: 0px;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1250px;
+  --breakpoint-xxl: 1450px;
+  --breakpoint-xxxl: 1550px;
+  --breakpoint-xxxxl: 1650px;
+
+  /* BORDER RADIUS */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --text: #ffffff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    --background: #0d0b1a;
+    --foreground: #1a1c2e;
+    --text: #ffffff;
+    --radius: 0.5rem;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  * {
+    padding: 0;
+    margin: 0;
+
+    box-sizing: border-box;
+    min-width: 0px;
+  }
+  body {
+    @apply font-body text-base;
+    overflow-x: hidden;
+    position: relative;
+    background: var(--background);
+    color: var(--text);
+  }
+  h1 {
+    @apply font-heading text-xl;
+  }
+  h2 {
+    @apply text-lg font-heading font-bold;
+  }
+  h3 {
+    @apply font-heading  font-bold leading-7;
+  }
+  p {
+    @apply font-body text-sm;
+  }
+  li {
+    @apply font-body text-sm;
+  }
 }
