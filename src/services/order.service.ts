@@ -21,3 +21,10 @@ export const getSingleOrder = async (orderId: string) => {
     `/api/mock/orders/${orderId}`
   );
 };
+
+// Poll order for lates status
+export const pollOrder = async (orderId: string) => {
+  return await handleGetRequest<IHttpResponse<IOrder>>(
+    `/api/mock/orders/poll${orderId}`
+  );
+};

@@ -1,0 +1,3 @@
+export const START_POLLING = "START_POLLING";
+export const STOP_POLLING = "STOP_POLLING";
+export const ORDER_STATUS = "ORDER_STATUS";
