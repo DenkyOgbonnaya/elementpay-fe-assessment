@@ -1,44 +1,13 @@
 "use client";
-import {
-  ORDER_STATUS,
-  START_POLLING,
-  STOP_POLLING,
-} from "@/constants/event.constant";
+
 import { useOrderStatus } from "@/hooks/query/useOrderStatus";
 import { IOrder } from "@/types/order.type";
-import { useEffect, useState } from "react";
 
 interface Props {
   order: IOrder;
 }
 export default function OrderDetails({ order }: Props) {
-  // const [orderStatus, setOrderStatus] = useState(order.status);
   const status = useOrderStatus(order.order_id);
-
-  // subscribe to order status update
-  // useEffect(() => {
-  //   if (!navigator.serviceWorker.controller) return;
-
-  //   // Listen for updates
-  //   navigator.serviceWorker.addEventListener("message", (event) => {
-  //     const { type, orderId, status } = event.data;
-  //     if (type === ORDER_STATUS) {
-  //       console.log(`Order ${orderId} status: ${status}`);
-  //       setOrderStatus(status);
-  //     }
-  //   });
-
-  //   // Tell SW to start polling
-  //   navigator.serviceWorker.controller.postMessage({
-  //     type: START_POLLING,
-  //     orderId: order.order_id,
-  //   });
-
-  //   // unsubscribe from order polling
-  //   return () => {
-  //     navigator.serviceWorker.controller?.postMessage({ type: STOP_POLLING });
-  //   };
-  // }, [order.order_id]);
 
   const statusColor = (status: string) => {
     switch (status) {
