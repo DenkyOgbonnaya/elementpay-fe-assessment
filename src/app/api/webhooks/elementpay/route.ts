@@ -1,8 +1,8 @@
 import envConfig from "@/configs/env.config";
 import orderModel from "@/db/order.model";
+import { broadcastOrderUpdate } from "@/utils/orderSubscribers";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
-import { broadcastOrderUpdate } from "../../mock/orders/[id]/subscribe/route";
 
 const WEBHOOK_SECRET = envConfig.WEBHOOK_SECRET;
 

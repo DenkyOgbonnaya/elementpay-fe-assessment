@@ -1,10 +1,5 @@
+import { orderSubscribers } from "@/utils/orderSubscribers";
 import { NextRequest } from "next/server";
-
-// simple in-memory store for pub/sub
-const orderSubscribers = new Map<
-  string,
-  Set<ReadableStreamDefaultController>
->();
 
 export async function GET(
   req: NextRequest,
@@ -35,27 +30,10 @@ export async function GET(
     },
     cancel() {
       // Cleanup if client disconnects
-
-      orderSubscribers.get(orderId)?.delete(this as any);
+      // @ts-expect-error type referency error
+      orderSubscribers.get(orderId)?.delete(this);
     },
   });
 
   return new Response(stream, { headers });
-}
-
-// Helper to broadcast updates to all clients of an order
-export function broadcastOrderUpdate(orderId: string, status: string) {
-  const subs = orderSubscribers.get(orderId);
-  if (!subs) return;
-
-  const msg = `data: ${JSON.stringify({ orderId, status })}\n\n`;
-
-  for (const sub of subs) {
-    try {
-      sub.enqueue(msg);
-    } catch (err) {
-      console.error("SSE enqueue failed", err);
-      subs.delete(sub);
-    }
-  }
 }

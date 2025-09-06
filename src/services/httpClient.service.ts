@@ -1,7 +1,6 @@
 // define common helper methods for making http requests
 
 import httpClient from "@/libs/axios.lib";
-import { IHttpResponse } from "@/types/http.type";
 
 export const handleGetRequest = async <T>(payload: string): Promise<T> => {
   const { data } = await httpClient.get(payload);
