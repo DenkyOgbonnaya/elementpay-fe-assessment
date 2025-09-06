@@ -58,12 +58,23 @@ export default function OrderForm() {
             </label>
             <Input
               id="amount"
+              type="number"
+              inputMode="numeric"
               placeholder="Enter amount"
-              {...register("amount", { required: true })}
+              {...register("amount", {
+                required: "Amount is required.",
+                min: { value: 1, message: "Amount should be greater than 0." },
+                valueAsNumber: true,
+              })}
             />
             {error?.response?.data?.error.amount && (
               <span className=" font-normal font-body text-xs leading-5 text-red-500">
                 {error?.response?.data?.error.amount}
+              </span>
+            )}
+            {errors?.amount?.message && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {errors?.amount.message}
               </span>
             )}
           </div>
@@ -71,7 +82,11 @@ export default function OrderForm() {
             <label htmlFor="currency" className="block text-left text-sm mb-1">
               Currency
             </label>
-            <Select id="currency" {...register("currency", { required: true })}>
+            <Select
+              id="currency"
+              {...register("currency", { required: "Currency is required" })}
+            >
+              <option value="">Select</option>
               <option value="KES">KES</option>
               <option value="USD">USD</option>
               <option value="NGN">NGN</option>
@@ -79,6 +94,11 @@ export default function OrderForm() {
             {error?.response?.data?.error.currency && (
               <span className=" font-normal font-body text-xs leading-5 text-red-500">
                 {error?.response?.data?.error.currency}
+              </span>
+            )}
+            {errors?.currency?.message && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {errors?.currency.message}
               </span>
             )}
           </div>
@@ -90,11 +110,16 @@ export default function OrderForm() {
             <Input
               id="token"
               placeholder="Enter Token"
-              {...register("token", { required: true })}
+              {...register("token", { required: "Token is required" })}
             />
             {error?.response?.data?.error.token && (
               <span className=" font-normal font-body text-xs leading-5 text-red-500">
                 {error?.response?.data?.error.token}
+              </span>
+            )}
+            {errors?.token?.message && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {errors?.token.message}
               </span>
             )}
           </div>
@@ -110,6 +135,11 @@ export default function OrderForm() {
             {error?.response?.data?.error.note && (
               <span className=" font-normal font-body text-xs leading-5 text-red-500">
                 {error?.response?.data?.error.note}
+              </span>
+            )}
+            {errors?.note?.message && (
+              <span className=" font-normal font-body text-xs leading-5 text-red-500">
+                {errors?.note.message}
               </span>
             )}
           </div>
