@@ -2,7 +2,6 @@
 import WalletConnection from "@/components/walletConnection";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useState } from "react";
 import { useAccount } from "wagmi";
 import { IOrder, IOrderInput } from "@/types/order.type";
 import Input from "@/components/ui/input";
@@ -14,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { ORDER_DETAILS_ROUTE } from "@/constants/routes.constant";
 
 export default function OrderForm() {
-  const [isConnected] = useState(true); // useAccount();
+  const { isConnected } = useAccount();
 
   const router = useRouter();
 

@@ -8,7 +8,8 @@ export default function Header() {
         href="/"
         className="font-heading font-bold text-2xl bg-[image:var(--color-primary-gradient)] bg-clip-text text-transparent [-webkit-text-fill-color:transparent]"
       >
-        CryptoPay
+        <span className=" hidden md:block">CryptoPay</span>
+        <span className=" md:hidden">CP</span>
       </Link>
 
       <WalletConnection showBalance={false} />
