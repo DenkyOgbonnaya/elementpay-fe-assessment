@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Introduction
+
+This repository contains my submission for the ElementPay Frontend Assessment. A DApp that allows users connect their crypto wallet, create order and poll order status, using Server-Sent Events(SSE) and webhooks notification to subscribe and publish order status update in real-time, maintaining Idempotency
+
+This is a [Next.js](https://nextjs.org) App Router project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+First, clone this repository to your system, cd to the project root directory and install dependencies:
 
 ```bash
-npm run dev
-# or
+
+yarn install
+
+```
+
+Create a `.env.local` file in the root directory and replace the values specified in the `env.local.example` file of this project.
+
+You can create a wallet connect project Name and project ID at [Wallet Connect](cloud.walletconnect.com)
+
+Start the application with
+
+```bash
+
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deliverables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Connect and disconnect a wallet (supports at least two wallet types, e.g., MetaMask and WalletConnect).
+- Create an order using a simple form. The form is hidden until a wallet is connected.
+- Poll order status, using Server-Sent Events(SSE) and webhooks notification to subscribe and publish order status update in real-time, maintaining Idempotency while updating the UI state machine.
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js 14+ (App/API Router) with TypeScript.
+- Node.js
+- Wallet library (wagmi/viem, WalletConnect, RainbowKit).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Brief notes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This application uses Server-Sent Events (SSE) and webhooks notification for real-time webhook updates, polling (for backup) and client timeout.
 
-## Deploy on Vercel
+With this, we are able to:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- subscribe to webhook notifications, trigger SSE immediately and update UI instantly.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- If webhook never arrives, polling eventually finds final state.
+
+- If neither arrives in 60s, there is a manual retry mechanism.
+
+## Project Structure Explained
+
+```bash
+├── src
+│   ├── app (Next.js App router)
+│   ├── components (reusable components, buttons, form inputs etc)
+│   ├── constants (constant variables definition)
+│   ├── hooks (custom reausable hooks)
+│   │── libs (third party library configs)
+|   ├── services (http network request services)
+|   ├── types (types definitions)
+|   ├── utils (utility helper functions)
+|   ├── db (in-memory db store)
+
+```
+
+## End-points documentation
+
+```bash
+Create a new order
+POST: /api/mock/orders/create
+
+Get a single order
+GET: /api/mock/orders/:order_id
+
+Subscribe to an order event
+GET: /api/mock/orders/:order_id/subscribe
+
+Poll an order
+GET: /api/mock/orders/:order_id/poll
+
+Webhook notification
+POST: /api/webhooks/elementpay
+
+Webhooks curl request samples
+
+# Valid
+curl -X POST http://localhost:3000/api/webhooks/elementpay \
+-H 'Content-Type: application/json' \
+-H 'X-Webhook-Signature: t=1710000000,v1=3QXTcQv0m0h4QkQ0L0w9ZsH1YFhZgMGnF0d9Xz4P7nQ=' \
+-d '{"type":"order.settled","data":{"order_id":"ord_0xabc123","status":"settled"}}'
+
+# Invalid signature
+curl -X POST http://localhost:3000/api/webhooks/elementpay \
+-H 'Content-Type: application/json' \
+-H 'X-Webhook-Signature: t=1710000300,v1=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' \
+-d '{"type":"order.failed","data":{"order_id":"ord_0xabc123","status":"failed"}}'
+
+```
+
+##
