@@ -1,4 +1,5 @@
 import orderModel from "@/db/order.model";
+import { getOrderStatus } from "@/utils/order.util";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -6,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const order = await orderModel.find(id);
+  const order = orderModel.find(id);
 
   if (!order) {
     return new Response(
@@ -22,12 +23,23 @@ export async function GET(
       }
     );
   }
+  let orderStatus = order.status;
+  //ignore duplicates, only update if the webhook has not
+  // finalized(settled/failed) the order
+  if (!["settled", "failed"].includes(orderStatus)) {
+    // derive the current order status
+    const currentOrderStatus = getOrderStatus(order);
+
+    // update status
+    orderModel.updateStatus(order.order_id, currentOrderStatus);
+    orderStatus = currentOrderStatus;
+  }
 
   return new Response(
     JSON.stringify({
       message: "Order polled successfully",
       data: {
-        status: order.status,
+        status: orderStatus,
       },
     }),
     {

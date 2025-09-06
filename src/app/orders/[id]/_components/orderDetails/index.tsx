@@ -4,6 +4,7 @@ import {
   START_POLLING,
   STOP_POLLING,
 } from "@/constants/event.constant";
+import { useOrderStatus } from "@/hooks/query/useOrderStatus";
 import { IOrder } from "@/types/order.type";
 import { useEffect, useState } from "react";
 
@@ -11,32 +12,33 @@ interface Props {
   order: IOrder;
 }
 export default function OrderDetails({ order }: Props) {
-  const [orderStatus, setOrderStatus] = useState(order.status);
+  // const [orderStatus, setOrderStatus] = useState(order.status);
+  const status = useOrderStatus(order.order_id);
 
   // subscribe to order status update
-  useEffect(() => {
-    if (!navigator.serviceWorker.controller) return;
+  // useEffect(() => {
+  //   if (!navigator.serviceWorker.controller) return;
 
-    // Listen for updates
-    navigator.serviceWorker.addEventListener("message", (event) => {
-      const { type, orderId, status } = event.data;
-      if (type === ORDER_STATUS) {
-        console.log(`Order ${orderId} status: ${status}`);
-        setOrderStatus(status);
-      }
-    });
+  //   // Listen for updates
+  //   navigator.serviceWorker.addEventListener("message", (event) => {
+  //     const { type, orderId, status } = event.data;
+  //     if (type === ORDER_STATUS) {
+  //       console.log(`Order ${orderId} status: ${status}`);
+  //       setOrderStatus(status);
+  //     }
+  //   });
 
-    // Tell SW to start polling
-    navigator.serviceWorker.controller.postMessage({
-      type: START_POLLING,
-      orderId: order.order_id,
-    });
+  //   // Tell SW to start polling
+  //   navigator.serviceWorker.controller.postMessage({
+  //     type: START_POLLING,
+  //     orderId: order.order_id,
+  //   });
 
-    // unsubscribe from order polling
-    return () => {
-      navigator.serviceWorker.controller?.postMessage({ type: STOP_POLLING });
-    };
-  }, [order.order_id]);
+  //   // unsubscribe from order polling
+  //   return () => {
+  //     navigator.serviceWorker.controller?.postMessage({ type: STOP_POLLING });
+  //   };
+  // }, [order.order_id]);
 
   const statusColor = (status: string) => {
     switch (status) {
@@ -62,14 +64,30 @@ export default function OrderDetails({ order }: Props) {
           </tr>
           <tr>
             <td className="py-3 px-4 font-medium text-gray-600">Status</td>
-            <td className="py-3 px-4">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${statusColor(
-                  orderStatus
-                )}`}
-              >
-                {orderStatus}
-              </span>
+            <td className="py-3 px-4 flex gap-2">
+              {status === "timeout" ? (
+                <div className="flex items-center gap-2">
+                  <span className=" text-xs font-body">
+                    Timed out – try again
+                  </span>
+                  <button
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${statusColor(
+                      "timeout"
+                    )}`}
+                    onClick={() => window.location.reload()}
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : (
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${statusColor(
+                    status
+                  )}`}
+                >
+                  {status}
+                </span>
+              )}
             </td>
           </tr>
           <tr>

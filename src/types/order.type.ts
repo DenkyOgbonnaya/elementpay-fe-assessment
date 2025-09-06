@@ -1,4 +1,9 @@
-export type OrderStatus = "created" | "processing" | "settled" | "failed";
+export type OrderStatus =
+  | "created"
+  | "processing"
+  | "settled"
+  | "failed"
+  | "timeout";
 export interface IOrderInput {
   amount: number;
   currency: string;

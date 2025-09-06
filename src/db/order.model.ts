@@ -1,4 +1,4 @@
-import { IOrder, IOrderInput } from "@/types/order.type";
+import { IOrder, IOrderInput, OrderStatus } from "@/types/order.type";
 import { getOrderStatus } from "@/utils/order.util";
 import { v4 as uuidv4 } from "uuid";
 
@@ -39,12 +39,21 @@ class Order {
       status: orderStatus,
     };
 
-    // Persist final state so it sticks
-    if (order.status !== orderStatus) {
-      this.orders.set(orderId, orderWithStatus);
+    return orderWithStatus;
+  }
+  async updateStatus(
+    orderId: string,
+    status: OrderStatus
+  ): Promise<IOrder | undefined> {
+    const order = this.orders.get(orderId);
+    if (!order) {
+      console.warn(`Order ${orderId} not found in memory store`);
+      return undefined;
     }
 
-    return orderWithStatus;
+    const updatedOrder: IOrder = { ...order, status };
+    this.orders.set(orderId, updatedOrder);
+    return updatedOrder;
   }
 }
 

@@ -25,6 +25,13 @@ export const getSingleOrder = async (orderId: string) => {
 // Poll order for lates status
 export const pollOrder = async (orderId: string) => {
   return await handleGetRequest<IHttpResponse<IOrder>>(
-    `/api/mock/orders/poll${orderId}`
+    `/api/mock/orders/${orderId}/poll`
+  );
+};
+
+// Subcribe to order for latest status
+export const subscribeOrder = async (orderId: string) => {
+  return await handleGetRequest<IHttpResponse<IOrder>>(
+    `/api/mock/orders/${orderId}/subscribe`
   );
 };
